@@ -1,6 +1,6 @@
 {
-  "versionCode": 4,
-  "versionName": "1.3.0",
+  "versionCode": 5,
+  "versionName": "1.4.0",
   "apkUrl": "https://github.com/Kamal142-D/mangaku/releases/latest/download/app-release.apk",
-  "notes": "Downloads centre, auto-download new chapters, reader tap-zones & brightness, self-healing sources, and faster updates."
+  "notes": "Your profile (name, @handle, photo and cover) now backs up and restores with your library, plus a frosted-glass update window and faster update checks."
 }
