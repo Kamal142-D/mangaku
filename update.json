@@ -1,6 +1,6 @@
 {
-  "versionCode": 5,
-  "versionName": "1.4.0",
+  "versionCode": 6,
+  "versionName": "1.5.0",
   "apkUrl": "https://github.com/Kamal142-D/mangaku/releases/latest/download/app-release.apk",
-  "notes": "Your profile (name, @handle, photo and cover) now backs up and restores with your library, plus a frosted-glass update window and faster update checks."
+  "notes": "Reading history, custom library categories, a new swipe-in banner layout, per-manga reader modes, and AniList sync."
 }
