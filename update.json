@@ -1,6 +1,6 @@
 {
-  "versionCode": 8,
-  "versionName": "1.5.2",
+  "versionCode": 9,
+  "versionName": "1.5.3",
   "apkUrl": "https://github.com/Kamal142-D/mangaku/releases/latest/download/app-release.apk",
-  "notes": "You'll now get a notification when a new version is available."
+  "notes": "Import: select multiple imported chapters and delete them at once."
 }
