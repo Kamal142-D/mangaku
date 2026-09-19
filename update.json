@@ -1,6 +1,6 @@
 {
-  "versionCode": 13,
-  "versionName": "1.7.1",
-  "apkUrl": "https://github.com/Kamal142-D/mangaku/releases/download/v1.7.1/app-release.apk",
-  "notes": "Other sources is now beside Add source on manga profiles. Link a built-in source directly to the current manga while preserving reading progress. Includes local storage, backups and optional AniList sync. Source availability varies; cross-source search is not included. Users still on the original 1.5.3 signing key must back up their data before uninstalling it to install this version."
+  "versionCode": 14,
+  "versionName": "1.7.2",
+  "apkUrl": "https://github.com/Kamal142-D/mangaku/releases/download/v1.7.2/app-release.apk",
+  "notes": "Other sources now searches Arabic sources together. Results appear progressively with source names, chapter counts and latest chapters, ranked by loaded chapter counts. Link your selection to the current manga while preserving progress. Single-source browsing remains available. Source availability varies. Users still on the original 1.5.3 signing key must back up their data before uninstalling it to install this version."
 }
