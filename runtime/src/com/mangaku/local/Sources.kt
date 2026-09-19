@@ -57,6 +57,19 @@ internal fun Element.image(): String = listOf("data-encrypted-src","data-src","d
     .firstNotNullOfOrNull { attr(it).takeIf { v -> v.isNotBlank() && !v.startsWith("data:") }?.let { v -> absolute(baseUri(),v) } } ?: ""
 internal fun Document.meta(name: String) = selectFirst("meta[property='$name'], meta[name='$name']")?.attr("content").orEmpty()
 
+/** Ranking for the aggregated multi-source search. Results with a known, de-duplicated
+ * chapter count come first, sorted by count then by latest available chapter, both descending.
+ * Results whose count is still loading keep their arrival order at the end and are never
+ * treated as zero. Pure and side-effect free so the ordering can be verified in tests. */
+internal object AggregateRanking {
+    fun <T> order(items: List<T>, count: (T) -> Int?, latest: (T) -> String?): List<T> {
+        val known = items.filter { count(it) != null }.sortedWith(
+            compareByDescending<T> { count(it)!! }.thenByDescending { latest(it)?.toBigDecimalOrNull() ?: java.math.BigDecimal.valueOf(-1) }
+        )
+        return known + items.filter { count(it) == null }
+    }
+}
+
 internal object SourceHttp {
     const val UA = "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Mobile Safari/537.36"
     private val last = mutableMapOf<String,Long>()

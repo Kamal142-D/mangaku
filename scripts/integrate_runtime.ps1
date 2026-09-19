@@ -212,12 +212,12 @@ EditClass 'Lq2/W0;' { param($text)
 '@)
 }
 EditClass 'Lq2/v;' { param($text)
-    $text = ReplaceOne $text 'const-wide/16 v1, 0xa' 'const-wide/16 v1, 0xd'
-    $text = ReplaceOne $text 'const-string v3, "1.5.4"' 'const-string v3, "1.7.1"'
+    $text = ReplaceOne $text 'const-wide/16 v1, 0xa' 'const-wide/16 v1, 0xe'
+    $text = ReplaceOne $text 'const-string v3, "1.5.4"' 'const-string v3, "1.7.2"'
     $messages = @(
-        'Manga profiles now have Add source and Other sources side by side. Select a title from a built-in source to link it directly to the current manga while keeping your progress.',
-        'زر إضافة المصدر كما هو، وبجانبه مصادر أخرى داخل صفحة المانجا. اختيار عمل من المصادر المدمجة يربطه بالمانجا الحالية مباشرة مع الاحتفاظ بتقدم القراءة.',
-        'На странице манги доступны Add source и Other sources. Выбранное произведение связывается с текущей мангой с сохранением прогресса.'
+        'Other sources now searches every Arabic source at once. Type a title, see matches from all sources merged and ranked by chapter count, then link the one you want to the current manga while keeping your progress.',
+        'زر مصادر أخرى صار يبحث في كل المصادر العربية مرة واحدة. اكتب اسم المانجا لتظهر نتائج المصادر مجمعة ومرتبة حسب عدد الفصول، ثم اربط ما تريده بالمانجا الحالية مع الاحتفاظ بتقدم القراءة.',
+        'Кнопка Other sources теперь ищет по всем арабским источникам сразу: введите название, результаты объединяются и сортируются по числу глав, затем свяжите нужный с текущей мангой без потери прогресса.'
     )
     $matches = [regex]::Matches($text,'const-string v0, "[^"\r\n]*"')
     if($matches.Count -lt 3) { throw 'Missing release note strings' }
@@ -235,7 +235,7 @@ $xml = ReplaceOne $xml '</application>' @'
 '@
 [IO.File]::WriteAllText($manifest,$xml)
 $metadata = Join-Path $ProjectPath 'apktool.yml'
-$text = [IO.File]::ReadAllText($metadata).Replace('versionCode: 10','versionCode: 13').Replace('versionName: 1.5.4','versionName: 1.7.1')
+$text = [IO.File]::ReadAllText($metadata).Replace('versionCode: 10','versionCode: 14').Replace('versionName: 1.5.4','versionName: 1.7.2')
 [IO.File]::WriteAllText($metadata,$text)
 $assets = Join-Path $ProjectPath 'assets'
 New-Item -ItemType Directory -Path $assets -Force | Out-Null

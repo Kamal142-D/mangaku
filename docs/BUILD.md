@@ -1,4 +1,4 @@
-# Building Mangaku 1.7.1
+# Building Mangaku 1.7.2
 
 The supported build combines the original 1.5.3 APK, the preserved 1.5.4 fixes,
 and the Kotlin source under `runtime/src/`. The recovered `android-project/`

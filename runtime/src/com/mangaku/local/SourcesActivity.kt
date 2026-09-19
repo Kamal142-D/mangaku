@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -39,6 +40,27 @@ class SourcesActivity: Activity() {
     private fun dp(n:Int)=(n*resources.displayMetrics.density).toInt()
     private fun color(attr:Int)=obtainStyledAttributes(intArrayOf(attr)).let { a -> try { a.getColor(0,ColorFallback) } finally { a.recycle() } }
     private val ColorFallback=android.graphics.Color.DKGRAY
+
+    // Aggregated multi-source search state.
+    private class AggResult(val source: Source, var manga: SourceManga) {
+        var count: Int?=null; var latest: String?=null; var details: SourceDetails?=null
+        var loading=false; var detailFailed=false
+    }
+    private val perSource=5; private val detailBatch=12; private val browseParallel=6; private val detailParallel=4
+    private var aggregating=false
+    private var aggRun=0
+    private var aggQuery=""
+    private var aggSearched=0
+    private var aggTotal=0
+    private val aggResults=mutableListOf<AggResult>()
+    private val aggFailed=linkedSetOf<String>()
+    private var aggPool: java.util.concurrent.ExecutorService?=null
+    private var detailPool: java.util.concurrent.ExecutorService?=null
+    private val thumbPool=Executors.newFixedThreadPool(2)
+    private val thumbs=object: LinkedHashMap<String,android.graphics.Bitmap>(0,0.75f,true) {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String,android.graphics.Bitmap>)=size>60
+    }
+
     override fun onCreate(state: Bundle?) {
         val dark=resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK==Configuration.UI_MODE_NIGHT_YES
         setTheme(if(dark) android.R.style.Theme_Material else android.R.style.Theme_Material_Light)
@@ -49,11 +71,17 @@ class SourcesActivity: Activity() {
             targetTitle=record.getString("title")
         }
         selected=state?.getString("source")?.let { id -> arabicSources.firstOrNull { it.id==id } }; query=state?.getString("query").orEmpty()
-        if(selected==null) catalog() else browse()
+        when { selected!=null -> browse(); targetId!=null -> aggregate(); else -> catalog() }
     }
     override fun onSaveInstanceState(out: Bundle) { super.onSaveInstanceState(out); out.putString("source",selected?.id); out.putString("query",query) }
-    override fun onDestroy() { generation++; work?.cancel(true); executor.shutdownNow(); super.onDestroy() }
-    override fun onBackPressed() { when { detail!=null -> { detail=null; browse(false) }; selected!=null -> { selected=null; query=""; catalog() }; else -> super.onBackPressed() } }
+    override fun onDestroy() { generation++; aggRun++; work?.cancel(true); executor.shutdownNow(); aggPool?.shutdownNow(); detailPool?.shutdownNow(); thumbPool.shutdownNow(); super.onDestroy() }
+    override fun onBackPressed() { when {
+        aggregating && detail!=null -> { detail=null; selected=null; aggregate() }
+        aggregating -> super.onBackPressed()
+        detail!=null -> { detail=null; browse(false) }
+        selected!=null -> { selected=null; query=""; catalog() }
+        else -> super.onBackPressed()
+    } }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
             android.R.id.home -> onBackPressed()
@@ -88,6 +116,7 @@ class SourcesActivity: Activity() {
         }; list.setOnItemClickListener { _,_,p,_ -> click(p) }
     }
     private fun catalog() {
+        aggregating=false; aggRun++
         frame(t("المصادر العربية","Arabic sources"))
         status.text=t("55 مصدرًا مدمجًا • ابحث واختر مصدر القراءة","55 built-in sources • Choose where to read")
         val search=input(t("ابحث عن مصدر","Find a source")); root.addView(search)
@@ -101,6 +130,160 @@ class SourcesActivity: Activity() {
         search.addTextChangedListener(object: TextWatcher { override fun beforeTextChanged(s:CharSequence?,start:Int,count:Int,after:Int){}; override fun onTextChanged(s:CharSequence?,start:Int,before:Int,count:Int)=filter(); override fun afterTextChanged(e:Editable?){} })
         adult.setOnCheckedChangeListener { _,v -> prefs.edit().putBoolean("adult",v).apply(); filter() }; filter()
     }
+
+    /** Entry screen for the profile "Other sources" button: one query across every allowed source. */
+    private fun aggregate() {
+        aggregating=true; selected=null; detail=null
+        frame(t("مصادر عربية","Arabic sources"))
+        status.text=if(aggResults.isEmpty()) t("اكتب اسم المانجا وابحث في كل المصادر مرة واحدة","Type a title and search every source at once") else aggStatusText()
+        val search=input(t("اسم المانجا","Manga title"),aggQuery.ifBlank { targetTitle }); root.addView(search)
+        val adult=Switch(this).apply { text=t("تضمين مصادر البالغين","Include adult sources"); minHeight=dp(48); isChecked=prefs.getBoolean("adult",false) }; root.addView(adult)
+        val controls=LinearLayout(this)
+        fun start() {
+            prefs.edit().putBoolean("adult",adult.isChecked).apply()
+            val q=search.text.toString().trim()
+            (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(search.windowToken,0)
+            if(q.isNotBlank()) runAggregate(q,adult.isChecked)
+        }
+        controls.addView(button(t("بحث في المصادر العربية","Search Arabic sources"),::start),LinearLayout.LayoutParams(0,-2,2f))
+        controls.addView(button(t("مصدر واحد","One source")) { catalog() },LinearLayout.LayoutParams(0,-2,1f))
+        root.addView(controls)
+        root.addView(list,LinearLayout.LayoutParams(-1,0,1f))
+        search.setOnEditorActionListener { _,action,_ -> if(action==android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) { start(); true } else false }
+        if(aggResults.isNotEmpty()) showAggResults()
+    }
+    private fun runAggregate(q:String, adult:Boolean) {
+        val run= ++aggRun
+        aggPool?.shutdownNow(); detailPool?.shutdownNow(); aggPool=null; detailPool=null
+        aggQuery=q; aggResults.clear(); aggFailed.clear(); aggSearched=0
+        val visible=arabicSources.filter { adult || !it.adult }
+        aggTotal=visible.size; showAggResults()
+        val pool=Executors.newFixedThreadPool(browseParallel); aggPool=pool
+        for(s in visible) pool.execute {
+            val found=try { s.browse(q.take(500),1).manga.take(perSource) } catch(e:Throwable) { null }
+            runOnUiThread {
+                if(run!=aggRun) return@runOnUiThread
+                if(found==null) aggFailed.add(s.id) else for(m in found) if(aggResults.none { it.source.id==s.id && it.manga.url==m.url }) aggResults.add(AggResult(s,m))
+                aggSearched++
+                if(aggregating && detail==null && !isFinishing) { showAggResults(); maybeAutoLoad(run) }
+            }
+        }
+    }
+    private fun retryFailed() {
+        val run=aggRun; val retry=aggFailed.toList(); if(retry.isEmpty()) return
+        aggFailed.clear(); showAggResults()
+        val pool=aggPool ?: Executors.newFixedThreadPool(browseParallel).also { aggPool=it }
+        for(id in retry) { val s=arabicSources.first { it.id==id }; pool.execute {
+            val found=try { s.browse(aggQuery.take(500),1).manga.take(perSource) } catch(e:Throwable) { null }
+            runOnUiThread {
+                if(run!=aggRun) return@runOnUiThread
+                if(found==null) aggFailed.add(s.id) else for(m in found) if(aggResults.none { it.source.id==s.id && it.manga.url==m.url }) aggResults.add(AggResult(s,m))
+                if(aggregating && detail==null && !isFinishing) { showAggResults(); maybeAutoLoad(run) }
+            }
+        } }
+    }
+    private fun maybeAutoLoad(run:Int) {
+        val active=aggResults.count { it.loading || it.count!=null || it.detailFailed }
+        if(active<detailBatch) loadDetails(detailBatch-active,run)
+    }
+    private fun loadDetails(n:Int, run:Int) {
+        if(run!=aggRun) return
+        val pending=aggResults.filter { it.count==null && !it.loading && !it.detailFailed }.take(n)
+        if(pending.isEmpty()) return
+        pending.forEach { it.loading=true }
+        if(aggregating && detail==null && !isFinishing) showAggResults()
+        val pool=detailPool ?: Executors.newFixedThreadPool(detailParallel).also { detailPool=it }
+        for(r in pending) pool.execute {
+            val loaded=try { val d=r.source.details(r.manga); val unique=d.chapters.distinctBy { it.url }; Triple(d,unique.size,unique.mapNotNull { it.number.toBigDecimalOrNull() }.maxOrNull()?.stripTrailingZeros()?.toPlainString()) } catch(e:Throwable) { null }
+            runOnUiThread {
+                if(run!=aggRun) return@runOnUiThread
+                if(loaded==null) { r.detailFailed=true; r.loading=false } else { r.details=loaded.first; r.manga=loaded.first.manga; r.count=loaded.second; r.latest=loaded.third; r.loading=false }
+                if(aggregating && detail==null && !isFinishing) showAggResults()
+            }
+        }
+    }
+    private fun aggSorted(): List<AggResult> = AggregateRanking.order(aggResults.toList(),{ it.count },{ it.latest })
+    private fun aggStatusText(): String {
+        val shown=aggResults.size; val done=aggSearched>=aggTotal
+        var text=if(done) t("اكتمل البحث في $aggTotal مصدرًا • $shown نتيجة","Searched all $aggTotal sources • $shown results")
+                 else t("اكتمل البحث في $aggSearched من $aggTotal مصدرًا • $shown نتيجة","Searched $aggSearched of $aggTotal sources • $shown results")
+        if(done && shown==0) text+="\n"+t("لا نتائج. جرّب اسمًا مختلفًا (بالعربية أو الإنجليزية).","No results. Try a different title (Arabic or English).")
+        if(done && aggFailed.isNotEmpty()) text+="\n"+t("تعذّر البحث في ${aggFailed.size} مصدرًا","${aggFailed.size} sources failed")
+        return text
+    }
+    private fun showAggResults() {
+        status.text=aggStatusText()
+        val sorted=aggSorted(); val done=aggSearched>=aggTotal
+        val footers=mutableListOf<String>()
+        if(aggResults.any { it.count==null && !it.loading && !it.detailFailed }) footers.add("more")
+        if(done && aggFailed.isNotEmpty()) footers.add("retry")
+        list.adapter=object: BaseAdapter() {
+            override fun getCount()=sorted.size+footers.size
+            override fun getItem(p:Int)=p
+            override fun getItemId(p:Int)=p.toLong()
+            override fun getViewTypeCount()=2
+            override fun getItemViewType(p:Int)=if(p<sorted.size) 0 else 1
+            override fun getView(p:Int,recycled:View?,parent:ViewGroup):View {
+                if(p>=sorted.size) {
+                    val b=(recycled as? Button) ?: Button(this@SourcesActivity).apply { isAllCaps=false; minHeight=dp(48) }
+                    val kind=footers[p-sorted.size]
+                    b.text=if(kind=="more") t("تحميل تفاصيل المزيد","Load more details") else t("إعادة محاولة المتعثرة (${aggFailed.size})","Retry failed (${aggFailed.size})")
+                    b.setOnClickListener { if(kind=="more") loadDetails(detailBatch,aggRun) else retryFailed() }
+                    return b
+                }
+                val r=sorted[p]
+                val row=(recycled as? LinearLayout)?.takeIf { it.tag=="res" } ?: LinearLayout(this@SourcesActivity).apply {
+                    orientation=LinearLayout.HORIZONTAL; tag="res"; minimumHeight=dp(100); setPadding(dp(4),dp(8),dp(4),dp(8)); gravity=android.view.Gravity.CENTER_VERTICAL
+                    addView(ImageView(context).apply { layoutParams=LinearLayout.LayoutParams(dp(60),dp(84)); scaleType=ImageView.ScaleType.CENTER_CROP })
+                    addView(LinearLayout(context).apply { orientation=LinearLayout.VERTICAL; setPadding(dp(10),0,dp(10),0)
+                        addView(TextView(context).apply { textSize=16f; setTextColor(color(android.R.attr.textColorPrimary)); maxLines=2; ellipsize=android.text.TextUtils.TruncateAt.END })
+                        addView(TextView(context).apply { textSize=13f; setTextColor(color(android.R.attr.textColorSecondary)); setPadding(0,dp(3),0,0) })
+                        addView(TextView(context).apply { textSize=13f; setPadding(0,dp(2),0,0) })
+                    },LinearLayout.LayoutParams(0,-2,1f))
+                }
+                val img=row.getChildAt(0) as ImageView
+                val texts=row.getChildAt(1) as LinearLayout
+                (texts.getChildAt(0) as TextView).text=r.manga.title
+                (texts.getChildAt(1) as TextView).text=r.source.name + if(r.source.adult) " • 18+" else ""
+                val line3=texts.getChildAt(2) as TextView
+                when {
+                    r.loading -> { line3.setTextColor(color(android.R.attr.textColorSecondary)); line3.text=t("جارٍ تحميل الفصول…","Loading chapters…") }
+                    r.detailFailed -> { line3.setTextColor(android.graphics.Color.rgb(0xC6,0x28,0x28)); line3.text=t("تعذّر تحميل الفصول","Couldn't load chapters") }
+                    r.count!=null -> { line3.setTextColor(color(android.R.attr.textColorPrimary)); line3.text=t("${r.count} فصل","${r.count} chapters")+(r.latest?.let { t(" • آخر فصل $it"," • latest $it") } ?: "") }
+                    else -> { line3.setTextColor(color(android.R.attr.textColorSecondary)); line3.text=t("عدد الفصول قيد التحميل","Chapter count pending") }
+                }
+                thumb(img,r); return row
+            }
+        }
+        list.setOnItemClickListener { _,_,p,_ -> if(p<sorted.size) openAggResult(sorted[p]) }
+    }
+    private fun openAggResult(r: AggResult) {
+        selected=r.source
+        val cached=r.details
+        if(cached!=null) { detail=cached; renderDetail() }
+        else async(t("جاري تحميل الفصول…","Loading chapters…"),{ r.source.details(r.manga) }) { d ->
+            val unique=d.chapters.distinctBy { it.url }
+            r.details=d; r.manga=d.manga; r.count=unique.size
+            r.latest=unique.mapNotNull { it.number.toBigDecimalOrNull() }.maxOrNull()?.stripTrailingZeros()?.toPlainString()
+            detail=d; renderDetail()
+        }
+    }
+    private fun thumb(img: ImageView, r: AggResult) {
+        val url=r.manga.cover; img.setImageDrawable(null); img.tag=url
+        if(url.isBlank()) return
+        synchronized(thumbs) { thumbs[url] }?.let { img.setImageBitmap(it); return }
+        thumbPool.execute {
+            try {
+                val bytes=SourceHttp.bytes(url,r.source,referer=r.source.base+"/",limit=8*1024*1024)
+                val bounds=BitmapFactory.Options().apply { inJustDecodeBounds=true }; BitmapFactory.decodeByteArray(bytes,0,bytes.size,bounds)
+                var sample=1; while(bounds.outWidth/(sample*2)>=120) sample*=2
+                val bmp=BitmapFactory.decodeByteArray(bytes,0,bytes.size,BitmapFactory.Options().apply { inSampleSize=sample }) ?: return@execute
+                synchronized(thumbs) { thumbs[url]=bmp }
+                runOnUiThread { if(!isFinishing && img.tag==url) img.setImageBitmap(bmp) }
+            } catch(_:Throwable) {}
+        }
+    }
+
     private fun browse(load:Boolean=true) {
         val source=selected ?: return; frame(source.name)
         val search=input(t("ابحث عن مانجا في هذا المصدر","Search this source"),query); root.addView(search)

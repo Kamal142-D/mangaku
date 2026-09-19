@@ -78,13 +78,13 @@ finally { $archive.Dispose() }
 & "$PSScriptRoot/sign_release.ps1" -InputApk $unsigned -OutputApk $signed -BuildTools $BuildTools
 
 $badging = & "$BuildTools/aapt.exe" dump badging $signed
-if ($LASTEXITCODE -ne 0 -or ($badging -join "`n") -notmatch "package: name='com\.mangaku\.app' versionCode='13' versionName='1\.7\.1'") {
+if ($LASTEXITCODE -ne 0 -or ($badging -join "`n") -notmatch "package: name='com\.mangaku\.app' versionCode='14' versionName='1\.7\.2'") {
     throw 'Built APK package/version verification failed.'
 }
 
 [ordered]@{
-    versionName = '1.7.1'
-    versionCode = 13
+    versionName = '1.7.2'
+    versionCode = 14
     sourceCommit = (Get-Content "$root/vendor/keiyoushi/UPSTREAM_COMMIT").Trim()
     sourceCatalogSha256 = (Get-FileHash "$root/vendor/keiyoushi/inventory.json").Hash
     builtAtUtc = [DateTime]::UtcNow.ToString('o')

@@ -28,6 +28,15 @@ class SourceChecks: Instrumentation() {
             check(JSONArray(HtmlSources.balanced(json,json.indexOf('['))).length()==1)
             val astro=ApiSources.unwrapAstro(JSONObject("""{"imageUrls":[1,[[0,"https://example.org/a"],[0,"https://example.org/b"]]]}""")) as JSONObject
             check(astro.getJSONArray("imageUrls").getString(1)=="https://example.org/b")
+            // Aggregated ranking: known counts first (desc, then latest desc); pending counts stay last, never treated as zero.
+            data class Rank(val tag:String,val count:Int?,val latest:String?)
+            val ranked=AggregateRanking.order(
+                listOf(Rank("pendingA",null,null),Rank("few",3,"3"),Rank("many",120,"120.5"),Rank("tieOld",50,"49.5"),Rank("pendingB",null,null),Rank("tieNew",50,"51")),
+                { it.count },{ it.latest }).map { it.tag }
+            check(ranked==listOf("many","tieNew","tieOld","few","pendingA","pendingB")) { "Unexpected ranking: $ranked" }
+            // A late count (0) still outranks a result whose count never arrived.
+            val late=AggregateRanking.order(listOf(Rank("unknown",null,null),Rank("zero",0,null)),{ it.count },{ it.latest }).map { it.tag }
+            check(late==listOf("zero","unknown")) { "Late/unknown ordering wrong: $late" }
             for(url in listOf("file:///data/a","https://127.0.0.1/x","https://localhost/x","https://user:pass@example.org/x")) {
                 check(runCatching { SourceHttp.validate(url) }.isFailure)
             }
@@ -41,7 +50,7 @@ class SourceChecks: Instrumentation() {
                 check(db.record("sources-test")!!.getString("notes")=="keep")
                 check(runCatching { db.put(m.copy().put("id","duplicate")) }.isFailure)
             }
-            if(args.getString("live")!="true") { finish(-1,Bundle().apply { putString("stream","PASS source checks: catalog, chapter identity, decimal/special chapters, escaped JSON, Astro decoding, URL boundary, backup and unique mapping") }); return }
+            if(args.getString("live")!="true") { finish(-1,Bundle().apply { putString("stream","PASS source checks: catalog, chapter identity, decimal/special chapters, escaped JSON, Astro decoding, aggregate ranking and late results, URL boundary, backup and unique mapping") }); return }
             val filter=args.getString("only")?.split(',')?.toSet()
             val selected=arabicSources.filter { filter==null || it.id in filter }
             require(selected.isNotEmpty() && (filter==null || selected.size==filter.size)) { "Unknown source ID in selection" }

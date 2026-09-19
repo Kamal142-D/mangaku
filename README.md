@@ -2,15 +2,17 @@
 
 Recovered Mangaku 1.5.3 with a buildable Kotlin local-data module and a repeatable
 APK build: SQLite migration, safer saves, tracking backups and optional AniList sync.
-Version 1.7.1 adds **Other sources** beside **Add source** on manga profiles.
-Choose a built-in source, search with the current manga's title, and link the
-selection directly to that manga while preserving reading progress.
+Version 1.7.2 adds combined Arabic-source search to **Other sources** on manga
+profiles. Search once, see results arrive across sources, load chapter counts
+and view results ranked by those counts. Link a selection directly to the current
+manga while preserving reading progress. Single-source browsing remains available.
 
 [Download the latest APK](https://github.com/Kamal142-D/mangaku/releases/latest).
 The catalog includes 55 built-in Arabic source adapters. The latest complete
 live run passed 20 sources; see [Arabic sources](docs/ARABIC_SOURCES.md) for
-verification and remaining provider failures. Cross-source search and ranking
-by chapter count are not included in this release.
+verification and remaining provider failures. Combined search considers up to
+five results per source; chapter details load in batches, so ordering covers
+the results whose counts have been loaded.
 
 Build locally with `./scripts/build_release.ps1` in PowerShell. Each run creates
 a separate verified APK under `builds/rebuild/`; it uses the existing signing key.

@@ -1,15 +1,21 @@
-# Built-in Arabic sources — 1.7.1
+# Built-in Arabic sources — 1.7.2
 
 Version 1.7.1 adds **Other sources** beside the existing **Add source** action
 on a manga profile. The browser carries the current manga ID, prefills its title
 when searching a provider, and links the selected result to that library record.
-Cross-source search and chapter-count ranking are not implemented yet.
+Version 1.7.2 opens a combined search from this action, with progressive results,
+chapter counts, latest numeric chapter and descending chapter-count ranking.
+It searches the first page of each allowed source and keeps up to five matches
+per source. Chapter details load in batches of 12; unknown counts stay last.
+Single-source browsing remains available. There is no separate latest-chapter
+sort selector in this version.
 
-Release: https://github.com/Kamal142-D/mangaku/releases/tag/v1.7.1
+Release: https://github.com/Kamal142-D/mangaku/releases/tag/v1.7.2
 
-The 1.7.1 APK passed build, alignment, version and signature verification.
-Storage and offline-source checks passed. The profile UI changes are for user
-testing; the UI and live-source evidence below describes the earlier 1.7.0 run.
+The 1.7.2 APK matches its build receipt and runtime inputs; its version and
+signature were verified before publication. New aggregate-ranking checks are
+included in the source, but no new runtime or UI test run was performed during
+publication. The UI and live-source evidence below describes the earlier 1.7.0 run.
 
 All 55 Arabic source entries from pinned Keiyoushi revision
 `eb9062cd3d81645a87a8bc80364db75931ffffca` are compiled into the runtime.
