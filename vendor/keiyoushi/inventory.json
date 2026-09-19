@@ -1,0 +1,556 @@
+[
+  {
+    "id": "anyonemanga",
+    "name": "Anyone Manga",
+    "family": "madara",
+    "urls": [
+      "https://anyonemanga.com"
+    ],
+    "adult": false,
+    "version": "1"
+  },
+  {
+    "id": "arabhentai",
+    "name": "هنتاي العرب - نت",
+    "family": "",
+    "urls": [
+      "https://arabhentai.net"
+    ],
+    "adult": true,
+    "version": "1"
+  },
+  {
+    "id": "arabmanhwa",
+    "name": "ArabManhwa",
+    "family": "madara",
+    "urls": [
+      "https://arabmanhwa.com"
+    ],
+    "adult": true,
+    "version": "1"
+  },
+  {
+    "id": "arabshentai",
+    "name": "هنتاي العرب",
+    "family": "",
+    "urls": [
+      "https://arabshentai.com"
+    ],
+    "adult": true,
+    "version": "4"
+  },
+  {
+    "id": "arabtoons",
+    "name": "عرب تونز",
+    "family": "madara",
+    "urls": [
+      "https://arabtoons.net"
+    ],
+    "adult": true,
+    "version": "1"
+  },
+  {
+    "id": "arbxcomix",
+    "name": "ArbxComix",
+    "family": "madara",
+    "urls": [
+      "https://arbxcomix.com"
+    ],
+    "adult": true,
+    "version": "0"
+  },
+  {
+    "id": "areamanga",
+    "name": "أريا مانجا",
+    "family": "mangathemesia",
+    "urls": [
+      "https://ar.kenmanga.com"
+    ],
+    "adult": false,
+    "version": "2"
+  },
+  {
+    "id": "ariatoon",
+    "name": "AriaToon",
+    "family": "",
+    "urls": [
+      "https://ariatoon.com"
+    ],
+    "adult": false,
+    "version": "1"
+  },
+  {
+    "id": "azora",
+    "name": "Azora",
+    "family": "iken",
+    "urls": [
+      "https://azorafly.com"
+    ],
+    "adult": false,
+    "version": "46"
+  },
+  {
+    "id": "comicverse",
+    "name": "Comic Verse",
+    "family": "zeistmanga",
+    "urls": [
+      "https://arcomixverse.blogspot.com"
+    ],
+    "adult": false,
+    "version": "2"
+  },
+  {
+    "id": "despairmanga",
+    "name": "Despair Manga",
+    "family": "mangathemesia",
+    "urls": [
+      "https://despair-manga.net"
+    ],
+    "adult": false,
+    "version": "0"
+  },
+  {
+    "id": "detectiveconanar",
+    "name": "شبكة كونان العربية",
+    "family": "madara",
+    "urls": [
+      "https://manga.detectiveconanar.com"
+    ],
+    "adult": false,
+    "version": "3"
+  },
+  {
+    "id": "dilar",
+    "name": "Dilar",
+    "family": "",
+    "urls": [
+      "https://dilar.tube"
+    ],
+    "adult": false,
+    "version": "14"
+  },
+  {
+    "id": "duskoryvile",
+    "name": "Duskoryvile",
+    "family": "",
+    "urls": [
+      "https://duskoryvile.com"
+    ],
+    "adult": true,
+    "version": "1"
+  },
+  {
+    "id": "empirewebtoon",
+    "name": "Empire Webtoon",
+    "family": "madara",
+    "urls": [
+      "https://webtoonempire-bl.com"
+    ],
+    "adult": true,
+    "version": "6"
+  },
+  {
+    "id": "eshadow",
+    "name": "EShadow",
+    "family": "",
+    "urls": [
+      "https://eshadow.net"
+    ],
+    "adult": false,
+    "version": "1"
+  },
+  {
+    "id": "goonscans",
+    "name": "Goon Scans",
+    "family": "mangathemesia",
+    "urls": [
+      "https://goonscans.org"
+    ],
+    "adult": true,
+    "version": "1"
+  },
+  {
+    "id": "hentailek",
+    "name": "هنتاي ليك",
+    "family": "",
+    "urls": [
+      "https://hentailek.com"
+    ],
+    "adult": true,
+    "version": "1"
+  },
+  {
+    "id": "hentaiman",
+    "name": "HentaiMan",
+    "family": "",
+    "urls": [
+      "https://hentaiman.net"
+    ],
+    "adult": true,
+    "version": "1"
+  },
+  {
+    "id": "hentaislayer",
+    "name": "هنتاي سلاير",
+    "family": "fuzzydoodle",
+    "urls": [
+      "https://hentaislayer.net"
+    ],
+    "adult": true,
+    "version": "4"
+  },
+  {
+    "id": "hijala",
+    "name": "Hijala",
+    "family": "mangathemesia",
+    "urls": [
+      "https://hijala.com"
+    ],
+    "adult": false,
+    "version": "3"
+  },
+  {
+    "id": "hizomanga",
+    "name": "Hizo Manga",
+    "family": "madara",
+    "urls": [
+      "https://hizomanga.net"
+    ],
+    "adult": false,
+    "version": "0"
+  },
+  {
+    "id": "kawiimanga",
+    "name": "Kawii Manga",
+    "family": "",
+    "urls": [
+      "https://kawaiimanga.org"
+    ],
+    "adult": false,
+    "version": "1"
+  },
+  {
+    "id": "lavascans",
+    "name": "Lava Scans",
+    "family": "mangathemesia",
+    "urls": [
+      "https://lavascans.com"
+    ],
+    "adult": false,
+    "version": "1"
+  },
+  {
+    "id": "lonertranslations",
+    "name": "Loner Translations",
+    "family": "zeistmanga",
+    "urls": [
+      "https://loner-tl.blogspot.com"
+    ],
+    "adult": false,
+    "version": "0"
+  },
+  {
+    "id": "manga3asq",
+    "name": "مانجا العاشق",
+    "family": "madara",
+    "urls": [
+      "https://3asq.online"
+    ],
+    "adult": false,
+    "version": "4"
+  },
+  {
+    "id": "mangaailand",
+    "name": "Manga Ai Land",
+    "family": "zeistmanga",
+    "urls": [
+      "https://manga-ai-land.blogspot.com"
+    ],
+    "adult": false,
+    "version": "0"
+  },
+  {
+    "id": "mangacloud",
+    "name": "MangaCloud",
+    "family": "",
+    "urls": [
+      "https://mangacloud.online"
+    ],
+    "adult": false,
+    "version": "1"
+  },
+  {
+    "id": "mangadar",
+    "name": "MangaDar",
+    "family": "",
+    "urls": [
+      "https://mangadar.com"
+    ],
+    "adult": false,
+    "version": "2"
+  },
+  {
+    "id": "mangahub",
+    "name": "MangaHub",
+    "family": "zeistmanga",
+    "urls": [
+      "https://www.mangaxhentai.com"
+    ],
+    "adult": true,
+    "version": "2"
+  },
+  {
+    "id": "mangalek",
+    "name": "مانجا ليك",
+    "family": "madaralegacy",
+    "urls": [
+      "https://mangalik.net",
+      "https://lekmanga.online",
+      "https://like-manga.net",
+      "https://lekmanga.site",
+      "https://manga-leko.site"
+    ],
+    "adult": false,
+    "version": "13"
+  },
+  {
+    "id": "mangalink",
+    "name": "مانجا لينك",
+    "family": "madara",
+    "urls": [
+      "https://link-manga.net"
+    ],
+    "adult": false,
+    "version": "5"
+  },
+  {
+    "id": "mangalionz",
+    "name": "MangaLionz",
+    "family": "madaralegacy",
+    "urls": [
+      "https://manga-lionz.org"
+    ],
+    "adult": false,
+    "version": "5"
+  },
+  {
+    "id": "mangaspark",
+    "name": "MangaSpark",
+    "family": "madaralegacy",
+    "urls": [
+      "https://sparkmanga.net"
+    ],
+    "adult": false,
+    "version": "8"
+  },
+  {
+    "id": "mangastarz",
+    "name": "Manga Starz",
+    "family": "madara",
+    "urls": [
+      "https://starzmanga.com"
+    ],
+    "adult": false,
+    "version": "10"
+  },
+  {
+    "id": "mangaswat",
+    "name": "MangaSwat",
+    "family": "",
+    "urls": [
+      "https://meshmanga.com"
+    ],
+    "adult": false,
+    "version": "61"
+  },
+  {
+    "id": "mangatales",
+    "name": "Manga Tales",
+    "family": "",
+    "urls": [
+      "https://www.mangatales.com"
+    ],
+    "adult": false,
+    "version": "4"
+  },
+  {
+    "id": "mangatek",
+    "name": "MangaTek",
+    "family": "",
+    "urls": [
+      "https://mangatek.com"
+    ],
+    "adult": false,
+    "version": "5"
+  },
+  {
+    "id": "mangatime",
+    "name": "MangaTime",
+    "family": "",
+    "urls": [
+      "https://mangatime.org"
+    ],
+    "adult": false,
+    "version": "1"
+  },
+  {
+    "id": "mangatuk",
+    "name": "MangaTuk",
+    "family": "madaralegacy",
+    "urls": [
+      "https://mangatuk.com"
+    ],
+    "adult": false,
+    "version": "0"
+  },
+  {
+    "id": "manhatic",
+    "name": "Manhatic",
+    "family": "madara",
+    "urls": [
+      "https://manhatic.com"
+    ],
+    "adult": true,
+    "version": "0"
+  },
+  {
+    "id": "manhatok",
+    "name": "Manhatok",
+    "family": "zeistmanga",
+    "urls": [
+      "https://manhatok.blogspot.com"
+    ],
+    "adult": false,
+    "version": "1"
+  },
+  {
+    "id": "murim",
+    "name": "Murim",
+    "family": "zeistmanga",
+    "urls": [
+      "https://www.murim.site"
+    ],
+    "adult": false,
+    "version": "1"
+  },
+  {
+    "id": "neverscans",
+    "name": "NeverScans",
+    "family": "",
+    "urls": [
+      "https://neverscans.com"
+    ],
+    "adult": false,
+    "version": "1"
+  },
+  {
+    "id": "oduto",
+    "name": "Oduto",
+    "family": "",
+    "urls": [
+      "https://nb19u.blogspot.com"
+    ],
+    "adult": false,
+    "version": "1"
+  },
+  {
+    "id": "onma",
+    "name": "مانجا اون لاين",
+    "family": "mmrcms",
+    "urls": [
+      "https://onma.me"
+    ],
+    "adult": false,
+    "version": "3"
+  },
+  {
+    "id": "orcamanga",
+    "name": "Orca Manga",
+    "family": "zeistmanga",
+    "urls": [
+      "https://infinity896.blogspot.com"
+    ],
+    "adult": false,
+    "version": "1"
+  },
+  {
+    "id": "paradisebl",
+    "name": "Paradise BL",
+    "family": "madara",
+    "urls": [
+      "https://paradise-bl.com"
+    ],
+    "adult": true,
+    "version": "0"
+  },
+  {
+    "id": "rocksmanga",
+    "name": "Rocks Manga",
+    "family": "madaralegacy",
+    "urls": [
+      "https://rocksmanga.com"
+    ],
+    "adult": false,
+    "version": "3"
+  },
+  {
+    "id": "stellarsaber",
+    "name": "StellarSaber",
+    "family": "",
+    "urls": [
+      "https://stellarsaber.pro"
+    ],
+    "adult": false,
+    "version": "33"
+  },
+  {
+    "id": "teamx",
+    "name": "Team X",
+    "family": "",
+    "urls": [
+      "https://olympustaff.com"
+    ],
+    "adult": false,
+    "version": "33"
+  },
+  {
+    "id": "xsanomanga",
+    "name": "XSano Manga",
+    "family": "zeistmanga",
+    "urls": [
+      "https://www.xsano-manga.com"
+    ],
+    "adult": false,
+    "version": "0"
+  },
+  {
+    "id": "yokai",
+    "name": "Yokai",
+    "family": "zeistmanga",
+    "urls": [
+      "https://yokai-team.blogspot.com"
+    ],
+    "adult": false,
+    "version": "2"
+  },
+  {
+    "id": "yonabar",
+    "name": "Yona Bar",
+    "family": "madaralegacy",
+    "urls": [
+      "https://yonaber.com"
+    ],
+    "adult": true,
+    "version": "0"
+  },
+  {
+    "id": "yurimoonsub",
+    "name": "Yuri Moon Sub",
+    "family": "zeistmanga",
+    "urls": [
+      "https://yurimoonsub.blogspot.com"
+    ],
+    "adult": true,
+    "version": "2"
+  }
+]

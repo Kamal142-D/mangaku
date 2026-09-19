@@ -1,0 +1,16 @@
+Mangaku built-in Arabic source adapters
+
+Adapted from Keiyoushi extensions-source and its shared multisrc engines:
+https://github.com/keiyoushi/extensions-source
+Pinned revision: eb9062cd3d81645a87a8bc80364db75931ffffca
+Upstream source and copyright notices are preserved under upstream/.
+The upstream Apache License 2.0 follows this notice in the application.
+
+Modifications for Mangaku: the source logic is compiled into the application,
+uses native Android networking and JSON, and is connected to Mangaku's local
+library, chapter reader and downloader. It does not load extension APKs.
+The adapted implementation is in runtime/src/com/mangaku/local/.
+These changes are not an upstream Keiyoushi release or endorsement.
+
+HTML parsing uses jsoup 1.17.2, licensed under the MIT License; its full
+license and copyright notice are included below the Apache license.
