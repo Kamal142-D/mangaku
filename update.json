@@ -1,6 +1,6 @@
 {
-  "versionCode": 10,
-  "versionName": "1.5.4",
-  "apkUrl": "https://github.com/Kamal142-D/mangaku/releases/latest/download/app-release.apk",
-  "notes": "Fixed chapter updates after adding a source. The signing key changed: back up your data, uninstall 1.5.3 once, then install 1.5.4. Future updates will install normally."
+  "versionCode": 13,
+  "versionName": "1.7.1",
+  "apkUrl": "https://github.com/Kamal142-D/mangaku/releases/download/v1.7.1/app-release.apk",
+  "notes": "Other sources is now beside Add source on manga profiles. Link a built-in source directly to the current manga while preserving reading progress. Includes local storage, backups and optional AniList sync. Source availability varies; cross-source search is not included. Users still on the original 1.5.3 signing key must back up their data before uninstalling it to install this version."
 }
